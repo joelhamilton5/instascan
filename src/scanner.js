@@ -1,4 +1,5 @@
 const EventEmitter = require('events');
+// const ZXing = require('./zxingnew')();
 const ZXing = require('./zxing')();
 const Visibility = require('visibilityjs');
 const StateMachine = require('fsm-as-promised');

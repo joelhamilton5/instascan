@@ -15,10 +15,10 @@ gulp.task('watch', function () {
 
 function build(file) {
   return browserify(file, {
-      noParse: [require.resolve('./src/zxing')]
+      noParse: [require.resolve('./src/zxing'), require.resolve('./src/zxingnew')]
     })
     .transform(babelify, {
-      ignore: /zxing\.js$/i,
+      ignore: [/zxing\.js$/i, /zxingnew\.js$/i],
       presets: ['es2015'],
       plugins: ['syntax-async-functions', 'transform-regenerator']
     })
@@ -29,8 +29,8 @@ function build(file) {
 gulp.task('release', function () {
   return build('./export.js')
     .pipe(buffer())
-    .pipe(uglify())
-    .pipe(rename({ suffix: '.min' }))
+    // .pipe(uglify())
+    // .pipe(rename({ suffix: '.min' }))
     .pipe(gulp.dest('./dist/'));
 });
 
