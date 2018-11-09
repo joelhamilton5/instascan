@@ -29,8 +29,8 @@ function build(file) {
 gulp.task('release', function () {
   return build('./export.js')
     .pipe(buffer())
-    // .pipe(uglify())
-    // .pipe(rename({ suffix: '.min' }))
+    .pipe(uglify())
+    .pipe(rename({ suffix: '.min' }))
     .pipe(gulp.dest('./dist/'));
 });
 

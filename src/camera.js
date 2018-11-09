@@ -3,27 +3,6 @@ function cameraName(label) {
     return clean || label || null;
 }
 
-function isMobile() {
-    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-    // Windows Phone must come first because its UA also contains "Android"
-    if (/windows phone/i.test(userAgent)) {
-        return true;
-    }
-
-    if (/android/i.test(userAgent)) {
-        return true;
-    }
-
-    // iOS detection from: http://stackoverflow.com/a/9039885/177710
-    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-        return true;
-    }
-
-    return false;
-}
-
-
 class MediaError extends Error {
     constructor(type) {
         super(`Cannot access video stream (${type}).`);
@@ -32,11 +11,11 @@ class MediaError extends Error {
 }
 
 class Camera {
-    constructor(id, name) {
+    constructor(id, name, rearFacing) {
         this.id = id;
         this.name = name;
         this._stream = null;
-        this.isMobile = false;
+        this.rearFacing = rearFacing;
     }
 
     async start() {
@@ -53,9 +32,7 @@ class Camera {
             }
         };
 
-        // let iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if(isMobile()) {
-            this.isMobile = true;
+        if(this.rearFacing) {
             constraints.video.facingMode = 'environment';
         }
 
@@ -78,13 +55,13 @@ class Camera {
         this._stream = null;
     }
 
-    static async getCameras() {
+    static async getCameras(rearFacing) {
         await this._ensureAccess();
 
         let devices = await navigator.mediaDevices.enumerateDevices();
         return devices
             .filter(d => d.kind === 'videoinput')
-            .map(d => new Camera(d.deviceId, cameraName(d.label)));
+            .map(d => new Camera(d.deviceId, cameraName(d.label), rearFacing));
     }
 
     static async _ensureAccess() {
